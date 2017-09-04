@@ -80,4 +80,21 @@ public class VersionTest extends Assert {
     public void testIllegalPackageNameCaseTwo() {
         Version.of("org.#abc.xyz");
     }
+
+    @Test
+    public void itShallPrintVersionAndBuildNumberConcatenatedByDashWhenBuildNumberPresented() {
+        Version version = Version.of(SwissKnife.class);
+        String[] sa = version.toString().split("-");
+        assertEquals(2, sa.length);
+        assertEquals(sa[0], version.getProjectVersion());
+        assertEquals(sa[1], version.getBuildNumber());
+    }
+
+    @Test
+    public void itShallOnlyPrintVersionIfBuildNumberIsNotPresented() {
+        Version version = Version.of(DbUtil.class);
+        String versionTag = version.toString();
+        assertFalse(versionTag.contains("-"));
+        assertEquals(version.getProjectVersion(), versionTag);
+    }
 }

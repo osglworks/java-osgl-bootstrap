@@ -141,7 +141,7 @@ public final class Version {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(projectVersion);
-        if (null != buildNumber) {
+        if (!isBlank(buildNumber)) {
             sb.append("-").append(buildNumber);
         }
         return sb.toString();
