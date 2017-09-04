@@ -116,12 +116,18 @@ public final class Version {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Version version = (Version) o;
 
-        if (!projectVersion.equals(version.projectVersion)) return false;
+        if (!projectVersion.equals(version.projectVersion)) {
+            return false;
+        }
         return buildNumber != null ? buildNumber.equals(version.buildNumber) : version.buildNumber == null;
     }
 
@@ -160,7 +166,7 @@ public final class Version {
         if (!isValidPackageName(packageName)) {
             throw new IllegalArgumentException("package name is not valid: " + packageName);
         }
-        return _of(packageName);
+        return of_(packageName);
     }
 
     /**
@@ -180,36 +186,36 @@ public final class Version {
     /**
      * Returns a `Version` of the library contains the class specified.
      *
-     * @param aClass the class
+     * @param clazz the class
      * @return a `Version` for that class if provided or
      * {@link #UNKNOWN} if not provided
      * @throws NullPointerException if the class specified is `null`
      * @see #of(String)
      */
-    public static Version of(Class<?> aClass) {
-        String className = aClass.getName();
+    public static Version of(Class<?> clazz) {
+        String className = clazz.getName();
         int pos = className.lastIndexOf('.');
         if (pos < 0) {
             return UNKNOWN;
         }
         String packageName = className.substring(0, pos);
-        return _of(packageName);
+        return of_(packageName);
     }
 
     /**
      * Returns a `Version` of the library contains the package specified.
      *
-     * @param aPackage the package
+     * @param pkg the package
      * @return a `Version` for the package if provided or
      * {@link #UNKNOWN} if not provided
      * @throws NullPointerException if the class specified is `null`
      * @see #of(String)
      */
-    public static Version of(Package aPackage) {
-        return _of(aPackage.getName());
+    public static Version of(Package pkg) {
+        return of_(pkg.getName());
     }
 
-    private static Version _of(String packageName) {
+    private static Version of_(String packageName) {
         if (!packageName.contains(".")) {
             return UNKNOWN;
         }
