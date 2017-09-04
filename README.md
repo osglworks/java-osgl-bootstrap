@@ -1,7 +1,7 @@
 # OSGL Bootstrap
 
 [![APL v2](https://img.shields.io/badge/license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) 
-[![Maven Central](https://img.shields.io/maven-central/v/org.osgl/osgl-java-bootstrap.svg)](http://search.maven.org/#search%7Cga%7C1%7Cosgl-bootstrap)
+[![Maven Central](https://img.shields.io/maven-central/v/org.osgl/osgl-bootstrap.svg)](http://search.maven.org/#search%7Cga%7C1%7Cosgl-bootstrap)
 [![Build Status](https://travis-ci.org/osglworks/java-osgl-bootstrap.svg?branch=master)](https://travis-ci.org/osglworks/java-osgl-bootstrap)
 [![codecov](https://codecov.io/gh/osglworks/java-osgl-bootstrap/branch/master/graph/badge.svg)](https://codecov.io/gh/osglworks/java-osgl-bootstrap)
 [![Javadocs](http://www.javadoc.io/badge/org.osgl/osgl-bootstrap.svg?color=red)](http://www.javadoc.io/doc/org.osgl/osgl-bootstrap)
