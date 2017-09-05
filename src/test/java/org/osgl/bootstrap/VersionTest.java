@@ -103,7 +103,7 @@ public class VersionTest extends Assert {
     @Test
     public void testDecoratedProjectVersion() {
         String projectVersion = "1.0.0";
-        assertEquals("R" + projectVersion, Version.decoratedProjectVersion(projectVersion));
+        assertEquals("r" + projectVersion, Version.decoratedProjectVersion(projectVersion));
     }
 
     @Test

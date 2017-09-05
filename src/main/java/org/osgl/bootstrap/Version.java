@@ -82,8 +82,8 @@ import java.util.concurrent.ConcurrentMap;
  * System.out.println(swissKnifeVersion.getArtifactId()); // print `swissknife`
  * System.out.println(swissKnifeVersion.getProjectVersion()); // print `1.0`
  * System.out.println(swissKnifeVersion.getBuildNumber()); // print `ebf1`
- * System.out.println(swissKnifeVersion.getVersion()); // print `R1.0-ebf1`
- * System.out.println(swissKnifeVersion); // print `swissknife-R1.0-ebf1`
+ * System.out.println(swissKnifeVersion.getVersion()); // print `r1.0-ebf1`
+ * System.out.println(swissKnifeVersion); // print `swissknife-r1.0-ebf1`
  * ```
  */
 public final class Version {
@@ -343,7 +343,7 @@ public final class Version {
      * Returns decorated project version.
      *
      * If project version is end with `-SNAPSHOT`, then prepend with `v`;
-     * otherwise prepend with `R`
+     * otherwise prepend with `r`
      *
      * @param projectVersion
      *      the project version
@@ -351,7 +351,7 @@ public final class Version {
      *      decorated project version
      */
     static String decoratedProjectVersion(String projectVersion) {
-        return (projectVersion.endsWith("-SNAPSHOT") ? "v" : "R") + projectVersion;
+        return (projectVersion.endsWith("-SNAPSHOT") ? "v" : "r") + projectVersion;
     }
 
     static void clearCache() {
