@@ -162,7 +162,8 @@ public final class Version {
     }
 
     /**
-     * Check if a `Version` instance is {@link #UNKNOWN}
+     * Check if a `Version` instance is {@link #UNKNOWN}.
+     * 
      * @return `true` if this version is unknown or `false` otherwise
      */
     public boolean isUnknown() {
