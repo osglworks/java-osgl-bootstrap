@@ -8,7 +8,7 @@
 
 A minimum set of utilities required by all other OSGL Java libraries
 
-* Version utility: allow OSGL library and any other Java app to create a runtime version info based on their maven build
+* Version tool: allow OSGL library and any other Java app to create a runtime version info based on their maven build
 
 ## Installation
 
@@ -22,35 +22,67 @@ Add the following dependency into your `pom.xml` file:
 </dependency>
 ```
 
-## Prepare version info
+## [Version tool]Prepare version info
 
 For library/app author, you need to prepare your version info so that Version tool can generate version at runtime. 
 
 Let's say your library/app package name is `org.mrcool.swissknife`, you need to add a file named `.version` into `src/resources/org/mrcool/swissknife` dir, the file content should be:
 
 ```properties
-version=<the version>
+artifact=<delivery-name>
+version=<the project version>
 # build number is optional
-build=<build number>
+build=<SCM build number, e.g. git hash>
 ``` 
-
 As a good practice you can rely on maven's resource filtering to automatically generate the version and build number for you, in which case your `.version` would look like:
 
 ```properties
+artifact=${project.artifactId}
 version=${project.version}
+## build number is optional
 build=${buildNumber}
 ```
 
-Where the `${project.version}` comes from the `<version>` tag in your `pom.xml` file while `${buildNumber}` comes from the [buildnumber maven plugin](http://www.mojohaus.org/buildnumber-maven-plugin/).
+Where the `${project.artifactId}` and `${project.version}` comes from standard maven environment, while `${buildNumber}` comes from the [buildnumber maven plugin](http://www.mojohaus.org/buildnumber-maven-plugin/).
 
-## Get version info at runtime
+**Note** to use maven environment variables in your `.version` file, you must enable filter in your resource plugin:
+
+```xml
+<resources>
+  <resource>
+    <directory>src/main/resources</directory>
+    <filtering>true</filtering>
+    <includes>
+      <include>**/.version</include>
+    </includes>
+   </resource>
+</resources>
+```
+
+**Warning** as a general rule, do **NOT** put the `.version` file for the first level package, e.g. `org`, `com`, `net` etc. Version tool will never read the `.version` file for a package name that does have a `.` inside
+
+
+## [Version tool]Get version info at runtime
 
 Once you have prepared your `.version` file and packaged it into the jar file, the user of the jar file can always access the version information through simple API call:
 
 ```java
 Version version1 = Version.of(SwissKnife.class);
-Version version2 = Version.of(new SwissKnife());
-Version version3 = Version.of("org.mrcool.swissknife");
+System.out.println(version1.getArtifactId()); // print `swissknife`
+System.out.println(version1.getProjectVersion()); // print `1.0`
+System.out.println(version1.getBuildNumber()); // print `ebf1`
+System.out.println(version1.getVersion()); // print `R1.0-ebf1`
+System.out.println(version1); // print `swissknife-R1.0-ebf1`
+
+// Another method to get Version info
+Version version2 = Version.of("org.mrcool.swissknife.db");
+
+// If a certain library's version is SNAPSHOT, e.g. 1.0-SNAPSHOT, 
+// then the version tag is decorated with `v` instead of `R`:
+System.out.println(version2.getProjectVersion()); // print `1.0-SNAPSHOT`
+System.out.println(version2.getBuildNumber()); // print `51b9`
+System.out.println(version2.getVersion()); // print `v1.0-SNAPSHOT-51b9`
+System.out.println(version2); // print `swissknife-v1.0-SNAPSHOT-ebf1`
 ```
 
 Initially Version tool will hit the resource file to load the version info, once it is loaded, the tool will cache the loaded version instance with the package name so that next time it won't hit any I/O operation for the same package name.

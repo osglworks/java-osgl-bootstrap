@@ -46,6 +46,8 @@
     <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
     <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
     <junit.version>4.12</junit.version>
+    <mockito.version>2.9.0</mockito.version>
+    <slf4j-api.version>1.7.25</slf4j-api.version>
   </properties>
 
   <scm>
@@ -172,6 +174,18 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-api.version}</version>
     </dependency>
 
   </dependencies>

@@ -20,15 +20,19 @@ package org.osgl.bootstrap;
  * #L%
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Represent **version** of a specific Java library.
+ * Describe the **version** of a specific Java delivery (app or library).
  *
- * The version contains two piece of information:
+ * The version contains three pieces of information:
  *
+ * * maven artifact id, which is defined by `${project.artifactId}`
  * * maven project version, which is defined by `${project.version}`
  * * scm build version, usually provided by
  * [buildnumber-maven-plugin](http://www.mojohaus.org/buildnumber-maven-plugin/)
@@ -42,12 +46,13 @@ import java.util.concurrent.ConcurrentMap;
  * name is `org.mrcool.swissknife`, then put the `.version` file under
  *
  * ```
- * src/main/resources/org/mrcool/swissknife`
+ * src/main/resources/org/mrcool/swissknife
  * ```
  *
  * The content of the `.version` file should be
  *
  * ```
+ * artifact=${project.artifactId}
  * version=${project.version}
  * build=${buildNumber} # optional
  * ```
@@ -56,10 +61,10 @@ import java.util.concurrent.ConcurrentMap;
  *
  * ```
  * <resources>
- * <resource>
- * <directory>src/main/resources</directory>
- * <filtering>true</filtering>
- * </resource>
+ *   <resource>
+ *     <directory>src/main/resources</directory>
+ *     <filtering>true</filtering>
+ *    </resource>
  * </resources>
  * ```
  *
@@ -74,25 +79,41 @@ import java.util.concurrent.ConcurrentMap;
  *
  * ```java
  * Version swissKnifeVersion = Version.of(org.mrcool.siwssknife.SwissKnife.class);
+ * System.out.println(swissKnifeVersion.getArtifactId()); // print `swissknife`
+ * System.out.println(swissKnifeVersion.getProjectVersion()); // print `1.0`
+ * System.out.println(swissKnifeVersion.getBuildNumber()); // print `ebf1`
+ * System.out.println(swissKnifeVersion.getVersion()); // print `R1.0-ebf1`
+ * System.out.println(swissKnifeVersion); // print `swissknife-R1.0-ebf1`
  * ```
  */
 public final class Version {
 
+    private static Logger logger = LoggerFactory.getLogger(Version.class);
+
     public static final String UNKNOWN_STR = "unknown";
 
-    public static final Version UNKNOWN = new Version(UNKNOWN_STR, UNKNOWN_STR);
+    public static final Version UNKNOWN = new Version(UNKNOWN_STR, UNKNOWN_STR, null);
 
     private static final ConcurrentMap<String, Version> cache = new ConcurrentHashMap<String, Version>();
 
+    private final String artifactId;
     private final String projectVersion;
     private final String buildNumber;
+    private final String versionTag;
 
-    private Version(String projectVersion, String buildNumber) {
-        if (null == projectVersion || "".equals(projectVersion.trim())) {
-            throw new IllegalArgumentException("project version is empty");
-        }
+    private Version(String artifactId, String projectVersion, String buildNumber) {
+        this.artifactId = artifactId.trim();
         this.projectVersion = projectVersion.trim();
         this.buildNumber = isBlank(buildNumber) ? "" : buildNumber.trim();
+        this.versionTag = generateVersionTag(this.projectVersion, this.buildNumber);
+    }
+
+    /**
+     * Returns artifact id, i.e. the name of the library or application
+     * @return artifact id
+     */
+    public String getArtifactId() {
+        return artifactId;
     }
 
     /**
@@ -105,6 +126,32 @@ public final class Version {
     }
 
     /**
+     * Returns version tag: a full version string.
+     *
+     * When {@link #buildNumber} exists the version tag is composed of
+     * {@link #projectVersion} a {@link #buildNumber} with the following
+     * pattern:
+     *
+     * ```
+     * ${patched-projectVersion}-${patched-buildNumber}
+     * ````
+     *
+     * Where `patched-projectVersion` could be one of the following:
+     * * If `projectVersion` ends with `-SNAPSHOT`, then `"v" + projectVersion`
+     * * Otherwise, `"R" + projectVersion`
+     *
+     * `patched-buildNumber` is `"b" + buildNumber`
+     *
+     * If {@link #buildNumber} is not defined then the version tag is the
+     * `patched-projectVersion` as described above
+     *
+     * @return a version tag as described
+     */
+    public String getVersion() {
+        return versionTag;
+    }
+
+    /**
      * Returns the build number which is defined in `${buildNumber}` maven environment variable when
      * [buildnumber-maven-plugin](http://www.mojohaus.org/buildnumber-maven-plugin/) is provided
      *
@@ -114,36 +161,39 @@ public final class Version {
         return buildNumber;
     }
 
+    /**
+     * Check if a `Version` instance is {@link #UNKNOWN}
+     * @return `true` if this version is unknown or `false` otherwise
+     */
+    public boolean isUnknown() {
+        return UNKNOWN.equals(this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
+
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         Version version = (Version) o;
 
-        if (!projectVersion.equals(version.projectVersion)) {
-            return false;
-        }
-        return buildNumber != null ? buildNumber.equals(version.buildNumber) : version.buildNumber == null;
+        return version.artifactId.equals(artifactId) && version.versionTag.equals(versionTag);
     }
 
     @Override
     public int hashCode() {
-        int result = projectVersion.hashCode();
-        result = 31 * result + (buildNumber != null ? buildNumber.hashCode() : 0);
+        int result = artifactId.hashCode();
+        result = 31 * result + versionTag.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(projectVersion);
-        if (!isBlank(buildNumber)) {
-            sb.append("-").append(buildNumber);
-        }
+        StringBuilder sb = new StringBuilder(artifactId).append("-").append(getVersion());
         return sb.toString();
     }
 
@@ -167,20 +217,6 @@ public final class Version {
             throw new IllegalArgumentException("package name is not valid: " + packageName);
         }
         return of_(packageName);
-    }
-
-    /**
-     * Returns a `Version` of the library contains the class of the object
-     * specified.
-     *
-     * @param object the object
-     * @return a `Version` for that class if provided or
-     * {@link #UNKNOWN} if not provided
-     * @throws NullPointerException if the object specified is `null`
-     * @see #of(String)
-     */
-    public static Version of(Object object) {
-        return object instanceof Class ? of((Class) object) : of(object.getClass());
     }
 
     /**
@@ -241,13 +277,22 @@ public final class Version {
 
     private static Version loadFromResource(String packageName) {
         Properties properties = PropertyLoader.INSTANCE.loadFromResource(packageName);
-        return null == properties ? null : loadFrom(properties);
+        return null == properties ? null : loadFrom(properties, packageName);
     }
 
-    private static Version loadFrom(Properties properties) {
+    private static Version loadFrom(Properties properties, String packageName) {
+        String artifactId = properties.getProperty("artifact");
+        if (isBlank(artifactId)) {
+            logger.error("artifact not defined in .version file: %s", packageName);
+            return UNKNOWN;
+        }
         String projectVersion = properties.getProperty("version");
+        if (isBlank(projectVersion)) {
+            logger.error("version not defined in .version file: %s", packageName);
+            return UNKNOWN;
+        }
         String buildNumber = properties.getProperty("build");
-        return new Version(projectVersion, buildNumber);
+        return new Version(artifactId, projectVersion, buildNumber);
     }
 
     private static boolean isValidPackageName(String s) {
@@ -283,6 +328,29 @@ public final class Version {
         }
 
         return true;
+    }
+
+    private String generateVersionTag(String projectVersion, String buildNumber) {
+        StringBuilder sb = new StringBuilder(decoratedProjectVersion(projectVersion));
+        if (!isBlank(buildNumber)) {
+            sb.append("-").append(buildNumber);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Returns decorated project version.
+     *
+     * If project version is end with `-SNAPSHOT`, then prepend with `v`;
+     * otherwise prepend with `R`
+     *
+     * @param projectVersion
+     *      the project version
+     * @return
+     *      decorated project version
+     */
+    static String decoratedProjectVersion(String projectVersion) {
+        return (projectVersion.endsWith("-SNAPSHOT") ? "v" : "R") + projectVersion;
     }
 
     static void clearCache() {
