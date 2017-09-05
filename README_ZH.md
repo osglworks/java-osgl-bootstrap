@@ -71,14 +71,14 @@ Version version1 = Version.of(SwissKnife.class);
 System.out.println(version1.getArtifactId()); // print `swissknife`
 System.out.println(version1.getProjectVersion()); // print `1.0`
 System.out.println(version1.getBuildNumber()); // print `ebf1`
-System.out.println(version1.getVersion()); // print `R1.0-ebf1`
-System.out.println(version1); // print `swissknife-R1.0-ebf1`
+System.out.println(version1.getVersion()); // print `r1.0-ebf1`
+System.out.println(version1); // print `swissknife-r1.0-ebf1`
 
 // Another method to get Version info
 Version version2 = Version.of("org.mrcool.swissknife.db");
 
 // If a certain library's version is SNAPSHOT, e.g. 1.0-SNAPSHOT, 
-// then the version tag is decorated with `v` instead of `R`:
+// then the version tag is decorated with `v` instead of `r`:
 System.out.println(version2.getProjectVersion()); // print `1.0-SNAPSHOT`
 System.out.println(version2.getBuildNumber()); // print `51b9`
 System.out.println(version2.getVersion()); // print `v1.0-SNAPSHOT-51b9`

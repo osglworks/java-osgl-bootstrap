@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0-BETA-3 (?)
+* Use lowercase `r` to decorate version tag
+
 ### 1.0.0-BETA-3 (2017-09-05)
 * Introduce `artifactId` into Version data
 * Add `Version.getVersion()` method which returns combination of projectVersion and buildNumber
