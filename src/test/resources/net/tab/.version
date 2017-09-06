@@ -1,0 +1,3 @@
+artifact=${x}
+version=${y}
+build=${z}

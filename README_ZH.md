@@ -85,5 +85,23 @@ System.out.println(version2.getVersion()); // print `v1.0-SNAPSHOT-51b9`
 System.out.println(version2); // print `swissknife-v1.0-SNAPSHOT-ebf1`
 ```
 
+**Tips** If app or library needs to decide it's own version there are shortcut way for that:
+
+```java
+package com.myproj;
+
+public class Foo {
+    public Version version() {
+        // normal way to get Foo's version:
+        return Version.of(Foo.class);
+    }
+    
+    public Version version2() {
+        // easy way (but more runtime cost) to get Foo's version
+        return Version.get();
+    }
+}
+```
+
 Initially Version tool will hit the resource file to load the version info, once it is loaded, the tool will cache the loaded version instance with the package name so that next time it won't hit any I/O operation for the same package name.
 

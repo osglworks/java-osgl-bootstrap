@@ -1,6 +1,11 @@
 # Changelog
 
-## 1.0.0-BETA-3 (?)
+## 1.0.0-BETA-5 (2017-09-08)
+* Version.get() returns caller's version
+* Log warn message if .version file contains variable reference
+
+## 1.0.0-BETA-4 (2017-09-07)
+## 1.0.0-BETA-3 (2017-09-07)
 * Use lowercase `r` to decorate version tag
 
 ### 1.0.0-BETA-3 (2017-09-05)

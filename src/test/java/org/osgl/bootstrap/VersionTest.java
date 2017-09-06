@@ -21,6 +21,7 @@ package org.osgl.bootstrap;
  */
 
 import net.evil.pkg.Kit;
+import net.tab.NetTab;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -150,5 +151,27 @@ public class VersionTest extends Assert {
         Mockito.verify(logger, Mockito.times(1)).error(messageCaptor.capture(), messageArgCaptor.capture());
         assertTrue(messageCaptor.getValue().contains("version not defined in .version file"));
         assertTrue(messageArgCaptor.getValue().toString().equals("org.demo.badversion.noversion"));
+    }
+
+    @Test
+    public void unknownVersionShallBeUnknownOtherVersionShallNot() {
+        assertTrue(Version.UNKNOWN.isUnknown());
+        assertFalse(Version.of(DbUtil.class).isUnknown());
+        assertFalse(Version.of(SwissKnife.class).isUnknown());
+    }
+
+    @Test
+    public void itShallLogWarnMessageIfThereAreEnvironmentVariableInVersionFile() {
+        Version version = Version.of(NetTab.class);
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Object> messageArgCaptor = ArgumentCaptor.forClass(Object.class);
+        Mockito.verify(logger, Mockito.times(3)).warn(messageCaptor.capture(), messageArgCaptor.capture());
+        assertTrue(messageCaptor.getValue().contains("variable found in .version file for %s"));
+        assertTrue(messageArgCaptor.getValue().toString().equals("net.tab"));
+    }
+
+    @Test
+    public void itShallReturnVersionOfCallerClassOnGetMethodCall() {
+        assertSame(Version.of(VersionTest.class), Version.get());
     }
 }

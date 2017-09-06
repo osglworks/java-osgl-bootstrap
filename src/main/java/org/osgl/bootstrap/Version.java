@@ -199,6 +199,17 @@ public final class Version {
     }
 
     /**
+     * Returns `Version` of the caller class
+     * @return the caller class version
+     */
+    public static Version get() {
+        StackTraceElement[] sa = new RuntimeException().getStackTrace();
+        StackTraceElement ste = sa[1];
+        String className = ste.getClassName();
+        return of(className);
+    }
+
+    /**
      * Returns a `Version` corresponding to the package name specified.
      *
      * This method will tried to check if {@link #cache local cache} contains
@@ -293,7 +304,9 @@ public final class Version {
             return UNKNOWN;
         }
         String buildNumber = properties.getProperty("build");
-        return new Version(artifactId, projectVersion, buildNumber);
+        return new Version(checkVariableRef(artifactId, packageName),
+                checkVariableRef(projectVersion, packageName),
+                checkVariableRef(buildNumber, packageName));
     }
 
     private static boolean isValidPackageName(String s) {
@@ -356,6 +369,16 @@ public final class Version {
 
     static void clearCache() {
         cache.clear();
+    }
+
+    private static String checkVariableRef(String s, String pkg) {
+        if (null == s) {
+            return null;
+        }
+        if (s.contains("${")) {
+            logger.warn("variable found in .version file for %s. please make sure your resource has been filtered", pkg);
+        }
+        return s;
     }
 
 }
