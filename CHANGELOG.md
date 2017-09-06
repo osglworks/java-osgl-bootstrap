@@ -1,11 +1,13 @@
 # Changelog
 
-## 1.0.0-BETA-5 (2017-09-08)
+## 1.0.0-BETA-6 (2017-09-07)
+* Use package name as artifact Id if not provided
+
+## 1.0.0-BETA-5 (2017-09-06)
 * Version.get() returns caller's version
 * Log warn message if .version file contains variable reference
 
-## 1.0.0-BETA-4 (2017-09-07)
-## 1.0.0-BETA-3 (2017-09-07)
+## 1.0.0-BETA-4 (2017-09-05)
 * Use lowercase `r` to decorate version tag
 
 ### 1.0.0-BETA-3 (2017-09-05)

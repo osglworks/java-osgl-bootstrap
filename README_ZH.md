@@ -29,9 +29,13 @@ For library/app author, you need to prepare your version info so that Version to
 Let's say your library/app package name is `org.mrcool.swissknife`, you need to add a file named `.version` into `src/resources/org/mrcool/swissknife` dir, the file content should be:
 
 ```properties
+# artifact is optional, if not provided the package name will be used
 artifact=<delivery-name>
+
+# version is mandatory, if not provided then UNKNOWN version will be returned
 version=<the project version>
-# build number is optional
+
+# build number is optional, if not provided then empty string will be used
 build=<SCM build number, e.g. git hash>
 ``` 
 As a good practice you can rely on maven's resource filtering to automatically generate the version and build number for you, in which case your `.version` would look like:

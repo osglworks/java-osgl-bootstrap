@@ -134,11 +134,14 @@ public class VersionTest extends Assert {
     }
 
     @Test
-    public void itShallReturnUnknownAndLogErrorMessageIfNoArtifactDefinedInVersionFile() {
-        assertSame(Version.UNKNOWN, Version.of("org.demo.badversion.noart"));
+    public void itShallUsePackageNameAsArtifiactIdIfNotDefinedAndLogWarnMessage() {
+        String pkg = "org.demo.badversion.noart";
+        String subPkg = pkg + ".sub";
+        Version v = Version.of(subPkg);
+        assertEquals(pkg, v.getArtifactId());
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> messageArgCaptor = ArgumentCaptor.forClass(Object.class);
-        Mockito.verify(logger, Mockito.times(1)).error(messageCaptor.capture(), messageArgCaptor.capture());
+        Mockito.verify(logger, Mockito.times(1)).warn(messageCaptor.capture(), messageArgCaptor.capture());
         assertTrue(messageCaptor.getValue().contains("artifact not defined in .version file"));
         assertTrue(messageArgCaptor.getValue().toString().equals("org.demo.badversion.noart"));
     }

@@ -52,8 +52,13 @@ import java.util.concurrent.ConcurrentMap;
  * The content of the `.version` file should be
  *
  * ```
+ * # artifact is optional, if not provided the package name will be used
  * artifact=${project.artifactId}
+ *
+ * # version is mandatory, if not provided then UNKNOWN version will be returned
  * version=${project.version}
+ *
+ * # build is optional, if not provided then empty string will be used
  * build=${buildNumber} # optional
  * ```
  *
@@ -295,8 +300,8 @@ public final class Version {
     private static Version loadFrom(Properties properties, String packageName) {
         String artifactId = properties.getProperty("artifact");
         if (isBlank(artifactId)) {
-            logger.error("artifact not defined in .version file: %s", packageName);
-            return UNKNOWN;
+            logger.warn("artifact not defined in .version file: %s", packageName);
+            artifactId = packageName;
         }
         String projectVersion = properties.getProperty("version");
         if (isBlank(projectVersion)) {
