@@ -235,19 +235,12 @@
                 <goals>
                   <goal>javadoc</goal>
                 </goals>
-                <configuration>
-                  <failOnError>false</failOnError>
-                </configuration>
               </execution>
               <execution>
                 <id>attach-javadocs</id>
                 <goals>
                   <goal>jar</goal>
                 </goals>
-                <configuration> <!-- add this to disable checking -->
-                  <failOnError>false</failOnError>
-                  <additionalparam>-Xdoclint:none</additionalparam>
-                </configuration>
               </execution>
             </executions>
           </plugin>
