@@ -162,7 +162,7 @@ public class VersionTest extends Assert {
 
     @Test
     public void itShallLogWarnMessageIfThereAreEnvironmentVariableInVersionFile() {
-        Version version = Version.of(NetTab.class);
+        Version.of(NetTab.class);
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> messageArgCaptor = ArgumentCaptor.forClass(Object.class);
         Mockito.verify(logger, Mockito.times(3)).warn(messageCaptor.capture(), messageArgCaptor.capture());

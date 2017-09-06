@@ -199,7 +199,7 @@ public final class Version {
     }
 
     /**
-     * Returns `Version` of the caller class
+     * Returns `Version` of the caller class.
      * @return the caller class version
      */
     public static Version get() {
