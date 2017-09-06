@@ -21,7 +21,7 @@
   <groupId>org.osgl</groupId>
   <artifactId>osgl-bootstrap</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-BETA-6</version>
+  <version>1.0.0-BETA-7-SNAPSHOT</version>
 
   <name>OSGL Bootstrap</name>
   <description>Provides minimum set of core utilities required by all OSGL libraries</description>
