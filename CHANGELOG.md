@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0-BETA-7 (2017-09-07)
+* Fix maven build warning about missing version of maven-source-plugin
+* Customized javadoc style
+* Deploy source package for snapshot version
+
 ## 1.0.0-BETA-6 (2017-09-07)
 * Use package name as artifact Id if not provided
 

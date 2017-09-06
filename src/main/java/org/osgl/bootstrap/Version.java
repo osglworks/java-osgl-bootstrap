@@ -137,11 +137,10 @@ public final class Version {
      * {@link #projectVersion} a {@link #buildNumber} with the following
      * pattern:
      *
-     * ```
-     * ${patched-projectVersion}-${patched-buildNumber}
-     * ````
+     * `${patched-projectVersion}-${patched-buildNumber}`
      *
      * Where `patched-projectVersion` could be one of the following:
+     *
      * * If `projectVersion` ends with `-SNAPSHOT`, then `"v" + projectVersion`
      * * Otherwise, `"R" + projectVersion`
      *
