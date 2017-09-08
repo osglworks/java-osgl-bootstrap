@@ -177,4 +177,38 @@ public class VersionTest extends Assert {
     public void itShallReturnVersionOfCallerClassOnGetMethodCall() {
         assertSame(Version.of(VersionTest.class), Version.get());
     }
+
+    @Test
+    public void equalToSelfShouldBeTrue() {
+        Version version = new Version("foo", "1.0", "a12f");
+        assertEquals(version, version);
+    }
+
+    @Test
+    public void equalToNullOrNonVersionObjectShouldBeFalse() {
+        Version version = new Version("foo", "1.0", "a12f");
+        assertNotEquals(null, version);
+        assertNotEquals(new Object(), version);
+    }
+
+    @Test
+    public void equalToVersionWithDifferentPartShouldBeFalse() {
+        Version version = new Version("foo", "1.0", "a12f");
+        assertNotEquals(new Version("foo", "1.0.1", "a12f"), version);
+        assertNotEquals(new Version("bar", "1.0", "a12f"), version);
+        assertNotEquals(new Version("foo", "1.0", "a12e"), version);
+    }
+
+    @Test
+    public void equalToVersionWithSamePartsShouldBeTrue() {
+        Version version = new Version("foo", "1.0", "a12f");
+        assertEquals(new Version("foo", "1.0", "a12f"), version);
+    }
+
+    @Test
+    public void hashCodeShouldBeSameWithVersionWithSameParts() {
+        Version v1 = new Version("foo", "1.0", "a12f");
+        Version v2 = new Version("foo", "1.0", "a12f");
+        assertEquals(v1.hashCode(), v2.hashCode());
+    }
 }

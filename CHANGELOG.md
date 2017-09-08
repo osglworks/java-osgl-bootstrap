@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0-BETA-8 (2017-09-09)
+* Make version constructor be public
+
 ## 1.0.0-BETA-7 (2017-09-07)
 * Fix maven build warning about missing version of maven-source-plugin
 * Customized javadoc style

@@ -106,7 +106,7 @@ public final class Version {
     private final String buildNumber;
     private final String versionTag;
 
-    private Version(String artifactId, String projectVersion, String buildNumber) {
+    public Version(String artifactId, String projectVersion, String buildNumber) {
         this.artifactId = artifactId.trim();
         this.projectVersion = projectVersion.trim();
         this.buildNumber = isBlank(buildNumber) ? "" : buildNumber.trim();
