@@ -87,12 +87,12 @@ public class VersionTest extends Assert {
 
     @Test(expected = IllegalArgumentException.class)
     public void testIllegalPackageNameCaseOne() {
-        Version.of("org.mrsuck..proj");
+        Version.ofPackage("org.mrsuck..proj");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIllegalPackageNameCaseTwo() {
-        Version.of("org.#abc.xyz");
+        Version.ofPackage("org.#abc.xyz");
     }
 
     @Test
@@ -137,7 +137,7 @@ public class VersionTest extends Assert {
     public void itShallUsePackageNameAsArtifiactIdIfNotDefinedAndLogWarnMessage() {
         String pkg = "org.demo.badversion.noart";
         String subPkg = pkg + ".sub";
-        Version v = Version.of(subPkg);
+        Version v = Version.ofPackage(subPkg);
         assertEquals(pkg, v.getArtifactId());
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> messageArgCaptor = ArgumentCaptor.forClass(Object.class);
@@ -148,7 +148,7 @@ public class VersionTest extends Assert {
 
     @Test
     public void itShallReturnUnknownAndLogErrorMessageIfNoVersionDefinedInVersionFile() {
-        assertSame(Version.UNKNOWN, Version.of("org.demo.badversion.noversion"));
+        assertSame(Version.UNKNOWN, Version.ofPackage("org.demo.badversion.noversion"));
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> messageArgCaptor = ArgumentCaptor.forClass(Object.class);
         Mockito.verify(logger, Mockito.times(1)).error(messageCaptor.capture(), messageArgCaptor.capture());
@@ -180,35 +180,54 @@ public class VersionTest extends Assert {
 
     @Test
     public void equalToSelfShouldBeTrue() {
-        Version version = new Version("foo", "1.0", "a12f");
+        Version version = new Version("com.bar", "foo", "1.0", "a12f");
         assertEquals(version, version);
     }
 
     @Test
     public void equalToNullOrNonVersionObjectShouldBeFalse() {
-        Version version = new Version("foo", "1.0", "a12f");
-        assertNotEquals(null, version);
-        assertNotEquals(new Object(), version);
+        Version version = new Version("com.bar","foo", "1.0", "a12f");
+        assertFalse(version.equals(null));
+        assertFalse(version.equals(new Object()));
     }
 
     @Test
     public void equalToVersionWithDifferentPartShouldBeFalse() {
-        Version version = new Version("foo", "1.0", "a12f");
-        assertNotEquals(new Version("foo", "1.0.1", "a12f"), version);
-        assertNotEquals(new Version("bar", "1.0", "a12f"), version);
-        assertNotEquals(new Version("foo", "1.0", "a12e"), version);
+        Version version = new Version("com.bar","foo", "1.0", "a12f");
+        assertNotEquals(new Version("com.bar","foo", "1.0.1", "a12f"), version);
+        assertNotEquals(new Version("com.bar","bar", "1.0", "a12f"), version);
+        assertNotEquals(new Version("com.bar","foo", "1.0", "a12e"), version);
+        assertNotEquals(new Version("net.bar","foo", "1.0", "a12f"), version);
     }
 
     @Test
     public void equalToVersionWithSamePartsShouldBeTrue() {
-        Version version = new Version("foo", "1.0", "a12f");
-        assertEquals(new Version("foo", "1.0", "a12f"), version);
+        Version version = new Version("com.bar","foo", "1.0", "a12f");
+        assertEquals(new Version("com.bar","foo", "1.0", "a12f"), version);
     }
 
     @Test
     public void hashCodeShouldBeSameWithVersionWithSameParts() {
-        Version v1 = new Version("foo", "1.0", "a12f");
-        Version v2 = new Version("foo", "1.0", "a12f");
+        Version v1 = new Version("com.bar","foo", "1.0", "a12f");
+        Version v2 = new Version("com.bar","foo", "1.0", "a12f");
         assertEquals(v1.hashCode(), v2.hashCode());
+    }
+
+    @Test
+    public void hashCodeShouldBeDifferentWithVersionWithSameParts() {
+        Version v1 = new Version("com.bar","foo", "1.0", "a12f");
+
+        Version v2 = new Version("net.bar","foo", "1.0", "a12f");
+        assertNotEquals(v1.hashCode(), v2.hashCode());
+
+        v2 = new Version("com.bar","Foo", "1.0", "a12f");
+        assertNotEquals(v1.hashCode(), v2.hashCode());
+
+        v2 = new Version("com.bar","foo", "1.1", "a12f");
+        assertNotEquals(v1.hashCode(), v2.hashCode());
+
+        v2 = new Version("com.bar","foo", "1.0", "a12x");
+        assertNotEquals(v1.hashCode(), v2.hashCode());
+
     }
 }

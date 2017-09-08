@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0-BETA-9 (2017-09-09)
+* Add `Version.getPackage()` method
+
 ## 1.0.0-BETA-8 (2017-09-09)
 * Make version constructor be public
 

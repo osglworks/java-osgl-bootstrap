@@ -97,16 +97,31 @@ public final class Version {
 
     public static final String UNKNOWN_STR = "unknown";
 
-    public static final Version UNKNOWN = new Version(UNKNOWN_STR, UNKNOWN_STR, null);
+    public static final Version UNKNOWN = new Version("", UNKNOWN_STR, UNKNOWN_STR, null);
 
     private static final ConcurrentMap<String, Version> cache = new ConcurrentHashMap<String, Version>();
 
     private final String artifactId;
+    private final String packageName;
     private final String projectVersion;
     private final String buildNumber;
     private final String versionTag;
 
-    public Version(String artifactId, String projectVersion, String buildNumber) {
+    /**
+     * Construct a `Version` instance with packageName, artifactId,
+     * projectVersion and buildName.
+     *
+     * @param packageName
+     *      the package name
+     * @param artifactId
+     *      the artifact id
+     * @param projectVersion
+     *      the project version
+     * @param buildNumber
+     *      the build number
+     */
+    public Version(String packageName, String artifactId, String projectVersion, String buildNumber) {
+        this.packageName = packageName;
         this.artifactId = artifactId.trim();
         this.projectVersion = projectVersion.trim();
         this.buildNumber = isBlank(buildNumber) ? "" : buildNumber.trim();
@@ -119,6 +134,17 @@ public final class Version {
      */
     public String getArtifactId() {
         return artifactId;
+    }
+
+    /**
+     * Returns app/library package name.
+     *
+     * package name is used to find the `.version` file when loading the version information
+     *
+     * @return the package name
+     */
+    public String getPackageName() {
+        return packageName;
     }
 
     /**
@@ -180,18 +206,20 @@ public final class Version {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+        if (o instanceof Version) {
+            Version that = (Version) o;
+            return that.versionTag.equals(this.versionTag)
+                    && that.packageName.equals(this.packageName)
+                    && that.artifactId.equals(this.artifactId);
         }
 
-        Version version = (Version) o;
-
-        return version.artifactId.equals(artifactId) && version.versionTag.equals(versionTag);
+        return false;
     }
 
     @Override
     public int hashCode() {
         int result = artifactId.hashCode();
+        result = 31 * result + packageName.hashCode();
         result = 31 * result + versionTag.hashCode();
         return result;
     }
@@ -210,7 +238,7 @@ public final class Version {
         StackTraceElement[] sa = new RuntimeException().getStackTrace();
         StackTraceElement ste = sa[1];
         String className = ste.getClassName();
-        return of(className);
+        return ofPackage(className);
     }
 
     /**
@@ -228,7 +256,7 @@ public final class Version {
      * @param packageName the package name
      * @return a `Version` instance for that package
      */
-    public static Version of(String packageName) {
+    public static Version ofPackage(String packageName) {
         if (!isValidPackageName(packageName)) {
             throw new IllegalArgumentException("package name is not valid: " + packageName);
         }
@@ -242,7 +270,7 @@ public final class Version {
      * @return a `Version` for that class if provided or
      * {@link #UNKNOWN} if not provided
      * @throws NullPointerException if the class specified is `null`
-     * @see #of(String)
+     * @see #ofPackage(String)
      */
     public static Version of(Class<?> clazz) {
         String className = clazz.getName();
@@ -261,7 +289,7 @@ public final class Version {
      * @return a `Version` for the package if provided or
      * {@link #UNKNOWN} if not provided
      * @throws NullPointerException if the class specified is `null`
-     * @see #of(String)
+     * @see #ofPackage(String)
      */
     public static Version of(Package pkg) {
         return of_(pkg.getName());
@@ -281,7 +309,7 @@ public final class Version {
             if (pos < 0) {
                 return UNKNOWN;
             }
-            return of(packageName.substring(0, pos));
+            return ofPackage(packageName.substring(0, pos));
         }
         cache.put(packageName, version);
         return version;
@@ -308,7 +336,7 @@ public final class Version {
             return UNKNOWN;
         }
         String buildNumber = properties.getProperty("build");
-        return new Version(checkVariableRef(artifactId, packageName),
+        return new Version(packageName, checkVariableRef(artifactId, packageName),
                 checkVariableRef(projectVersion, packageName),
                 checkVariableRef(buildNumber, packageName));
     }
