@@ -84,6 +84,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * ```java
  * Version swissKnifeVersion = Version.of(org.mrcool.siwssknife.SwissKnife.class);
+ * System.out.println(swissKnifeVersion.getPackage()); // print `org.mrcool.swissknife`
  * System.out.println(swissKnifeVersion.getArtifactId()); // print `swissknife`
  * System.out.println(swissKnifeVersion.getProjectVersion()); // print `1.0`
  * System.out.println(swissKnifeVersion.getBuildNumber()); // print `ebf1`

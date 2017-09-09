@@ -71,7 +71,8 @@ Where the `${project.artifactId}` and `${project.version}` comes from standard m
 Once you have prepared your `.version` file and packaged it into the jar file, the user of the jar file can always access the version information through simple API call:
 
 ```java
-Version version1 = Version.of(SwissKnife.class);
+Version version1 = Version.of(org.mrcool.swissknife.SwissKnife.class);
+System.out.println(version1.getPackage()); // print `org.mrcool.swissknife`
 System.out.println(version1.getArtifactId()); // print `swissknife`
 System.out.println(version1.getProjectVersion()); // print `1.0`
 System.out.println(version1.getBuildNumber()); // print `ebf1`
@@ -108,4 +109,3 @@ public class Foo {
 ```
 
 Initially Version tool will hit the resource file to load the version info, once it is loaded, the tool will cache the loaded version instance with the package name so that next time it won't hit any I/O operation for the same package name.
-
