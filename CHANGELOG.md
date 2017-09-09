@@ -1,11 +1,9 @@
 # Changelog
 
-## 1.0.0-BETA-11 (2017-09-10)
-* take out package name must contain dot `.` restriction to support ActFramework
-* unknown version tag shall not be decorated with `r`
-
 ## 1.0.0-BETA-10 (2017-09-09)
 * Make `Version` be serializable
+* take out package name must contain dot `.` restriction to support ActFramework
+* unknown version tag shall not be decorated with `r`
 
 ## 1.0.0-BETA-9 (2017-09-09)
 * Add `Version.getPackage()` method
