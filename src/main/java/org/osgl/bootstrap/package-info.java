@@ -1,5 +1,6 @@
 /**
- * OSGL bootstrap classes
+ * OSGL bootstrap package contains classes that are used
+ * across all other OSGL libraries.
  */
 package org.osgl.bootstrap;
 

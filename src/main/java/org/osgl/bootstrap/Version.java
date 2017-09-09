@@ -23,6 +23,7 @@ package org.osgl.bootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -92,7 +93,7 @@ import java.util.concurrent.ConcurrentMap;
  * System.out.println(swissKnifeVersion); // print `swissknife-r1.0-ebf1`
  * ```
  */
-public final class Version {
+public final class Version implements Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(Version.class);
 

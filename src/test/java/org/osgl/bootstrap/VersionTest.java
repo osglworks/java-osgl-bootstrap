@@ -33,6 +33,10 @@ import org.mrcool.swissknife.internal.StringUtil;
 import org.mrsuck.MyTool;
 import org.slf4j.Logger;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 
 public class VersionTest extends Assert {
@@ -229,5 +233,16 @@ public class VersionTest extends Assert {
         v2 = new Version("com.bar","foo", "1.0", "a12x");
         assertNotEquals(v1.hashCode(), v2.hashCode());
 
+    }
+
+    @Test
+    public void testSerialization() throws Exception {
+        Version v1 = new Version("com.bar","foo", "1.0", "a12f");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(v1);
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+        Version v2 = (Version) ois.readObject();
+        assertEquals(v1, v2);
     }
 }
