@@ -298,9 +298,6 @@ public final class Version implements Serializable {
     }
 
     private static Version of_(String packageName) {
-        if (!packageName.contains(".")) {
-            return UNKNOWN;
-        }
         Version version = cache.get(packageName);
         if (null != version) {
             return version;
@@ -398,6 +395,9 @@ public final class Version implements Serializable {
      *      decorated project version
      */
     static String decoratedProjectVersion(String projectVersion) {
+        if (UNKNOWN_STR.equals(projectVersion)) {
+            return projectVersion;
+        }
         return (projectVersion.endsWith("-SNAPSHOT") ? "v" : "r") + projectVersion;
     }
 

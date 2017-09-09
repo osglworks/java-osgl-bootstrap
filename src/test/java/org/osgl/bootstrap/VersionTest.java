@@ -85,8 +85,8 @@ public class VersionTest extends Assert {
     }
 
     @Test
-    public void itShallRejectLoadingVersionInfoFromFirstLevelPackage() {
-        assertSame(Version.UNKNOWN, Version.of(Kit.class));
+    public void itShallNotRejectLoadingVersionInfoFromFirstLevelPackage() {
+        assertNotEquals(Version.UNKNOWN, Version.of(Kit.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -165,6 +165,11 @@ public class VersionTest extends Assert {
         assertTrue(Version.UNKNOWN.isUnknown());
         assertFalse(Version.of(DbUtil.class).isUnknown());
         assertFalse(Version.of(SwissKnife.class).isUnknown());
+    }
+
+    @Test
+    public void unknownVersionTagShouldBeUnknown() {
+        assertEquals(Version.UNKNOWN_STR, Version.UNKNOWN.getVersion());
     }
 
     @Test
