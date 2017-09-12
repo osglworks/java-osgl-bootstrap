@@ -63,9 +63,6 @@ Where the `${project.artifactId}` and `${project.version}` comes from standard m
 </resources>
 ```
 
-**Warning** as a general rule, do **NOT** put the `.version` file for the first level package, e.g. `org`, `com`, `net` etc. Version tool will never read the `.version` file for a package name that does have a `.` inside
-
-
 ## [Version tool]Get version info at runtime
 
 Once you have prepared your `.version` file and packaged it into the jar file, the user of the jar file can always access the version information through simple API call:

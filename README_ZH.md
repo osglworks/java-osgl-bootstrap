@@ -6,13 +6,13 @@
 [![codecov](https://codecov.io/gh/osglworks/java-osgl-bootstrap/branch/master/graph/badge.svg)](https://codecov.io/gh/osglworks/java-osgl-bootstrap)
 [![Javadocs](http://www.javadoc.io/badge/org.osgl/osgl-bootstrap.svg?color=red)](http://www.javadoc.io/doc/org.osgl/osgl-bootstrap)
 
-A minimum set of utilities required by all other OSGL Java libraries
+其他 OSGL Java 工具库公用的最小工具集
 
-* Version tool: allow OSGL library and any other Java app to create a runtime version info based on their maven build
+* 版本工具: 给其他 OSGL 库或者任何 Java 应用创建并访问运行时版本信息的工具
 
-## Installation
+## 安装
 
-Add the following dependency into your `pom.xml` file:
+将一下依赖加入到你的 `pom.xml` 文件:
 
 ```xml
 <dependency>
@@ -22,34 +22,33 @@ Add the following dependency into your `pom.xml` file:
 </dependency>
 ```
 
-## [Version tool]Prepare version info
+## [版本工具]准备版本信息
 
-For library/app author, you need to prepare your version info so that Version tool can generate version at runtime. 
+库和应用开发者需要准备版本信息, 这样可以在运行时被访问
 
-Let's say your library/app package name is `org.mrcool.swissknife`, you need to add a file named `.version` into `src/resources/org/mrcool/swissknife` dir, the file content should be:
+我们假设你的库或者应用的包名是 `org.mrcool.swissknife`, 你需要将一个 `.version` 文件放入 `src/resources/org/mrcool/swissknife` 目录. 文件内容大致为:
 
 ```properties
-# artifact is optional, if not provided the package name will be used
+# 可选, 如果没有提供则使用包名替代
 artifact=<delivery-name>
 
-# version is mandatory, if not provided then UNKNOWN version will be returned
+# 必填, 如果未提供则使用 `unknown` 替代
 version=<the project version>
 
-# build number is optional, if not provided then empty string will be used
+# 可选, 如果未提供则使用空字串替代
 build=<SCM build number, e.g. git hash>
 ``` 
-As a good practice you can rely on maven's resource filtering to automatically generate the version and build number for you, in which case your `.version` would look like:
+通常来讲我们不希望每次发布新版本都去更新这个文件的内容,因此采用 maven 提供的资源过滤特性来帮助生成最终的 `.version` 文件. 而 `.version` 源代码则变成:
 
 ```properties
 artifact=${project.artifactId}
 version=${project.version}
-## build number is optional
 build=${buildNumber}
 ```
 
-Where the `${project.artifactId}` and `${project.version}` comes from standard maven environment, while `${buildNumber}` comes from the [buildnumber maven plugin](http://www.mojohaus.org/buildnumber-maven-plugin/).
+其中 `${project.artifactId}` 和 `${project.version}` 来自 maven 提供的环境变量, 而 `${buildNumber}` 则可以通过 [buildnumber maven plugin](http://www.mojohaus.org/buildnumber-maven-plugin/) 插件获取.
 
-**Note** to use maven environment variables in your `.version` file, you must enable filter in your resource plugin:
+**注意** 你需要打开资源过滤让 maven 将`.version` 文件中的变量做替换:
 
 ```xml
 <resources>
@@ -63,12 +62,10 @@ Where the `${project.artifactId}` and `${project.version}` comes from standard m
 </resources>
 ```
 
-**Warning** as a general rule, do **NOT** put the `.version` file for the first level package, e.g. `org`, `com`, `net` etc. Version tool will never read the `.version` file for a package name that does have a `.` inside
 
+## [版本工具]在运行时访问版本信息
 
-## [Version tool]Get version info at runtime
-
-Once you have prepared your `.version` file and packaged it into the jar file, the user of the jar file can always access the version information through simple API call:
+如果你按照上面的步骤准备了 `.version` 文件, 在发布的时候该文件会被打包进 jar 文件, 你的产品用户可以通过 API 来访问你的产品的版本信息:
 
 ```java
 Version version1 = Version.of(SwissKnife.class);
@@ -89,7 +86,7 @@ System.out.println(version2.getVersion()); // print `v1.0-SNAPSHOT-51b9`
 System.out.println(version2); // print `swissknife-v1.0-SNAPSHOT-ebf1`
 ```
 
-**Tips** If app or library needs to decide it's own version there are shortcut way for that:
+**小贴士** 如果如果应用希望获得自己的版本,一个简单的办法是使用 `Version.get()`:
 
 ```java
 package com.myproj;
@@ -107,5 +104,5 @@ public class Foo {
 }
 ```
 
-Initially Version tool will hit the resource file to load the version info, once it is loaded, the tool will cache the loaded version instance with the package name so that next time it won't hit any I/O operation for the same package name.
+关于性能: 版本工具会缓存从磁盘中加载的 .version 文件内容这样访问同一个软件的版本信息不会重复请求 IO 操作
 
