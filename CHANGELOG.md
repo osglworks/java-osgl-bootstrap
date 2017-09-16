@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0 (2017-09-17)
+
+* Retag 1.0.0-BETA-10 to 1.0.0
+
 ## 1.0.0-BETA-10 (2017-09-09)
 * Make `Version` be serializable
 * take out package name must contain dot `.` restriction to support ActFramework
